@@ -154,7 +154,9 @@ for key, value in info.items():   # 同时取键和值（推荐）
     print(f"{key}: {value}")
 
 for key in info.keys():           # 只取键
+    print(key)
 for value in info.values():       # 只取值
+    print(value)
 ```
 
 ### 字典也是"引用"类型
