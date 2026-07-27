@@ -332,6 +332,32 @@ if __name__ == "__main__":
 | `assertRaises(Error, func)` | func 抛出指定异常 |
 | `assertAlmostEqual(a, b)` | 浮点数近似相等 |
 
+### setUp 与 tearDown：公共的准备和清理
+
+如果多个测试有相同的准备工作（比如都要创建一个临时文件），可以放在 `setUp` 和 `tearDown` 里——每个测试方法执行前后自动调用：
+
+```python
+class TestFileOperations(unittest.TestCase):
+
+    def setUp(self):
+        """每个测试方法运行前自动调用"""
+        self.test_file = "temp_test.txt"
+        with open(self.test_file, "w") as f:
+            f.write("test data")
+
+    def tearDown(self):
+        """每个测试方法运行后自动调用（无论测试是否失败）"""
+        if os.path.exists(self.test_file):
+            os.remove(self.test_file)
+
+    def test_read_file(self):
+        with open(self.test_file, "r") as f:
+            self.assertEqual(f.read(), "test data")
+
+    def test_file_exists(self):
+        self.assertTrue(os.path.exists(self.test_file))
+```
+
 ### 测试的原则
 
 - **一个测试只测一件事**：`test_divide_normal` 不负责测"除零"
@@ -339,12 +365,86 @@ if __name__ == "__main__":
 - **先写测试再写功能（TDD）** 是个理想状态，但至少功能写完后**立刻补测试**
 - **修改代码后跑一遍测试**——哪个测试挂了，你就知道哪里出了问题
 
+> `unittest` 是标准库中的测试框架。社区中还有一个更流行的第三方选择 **pytest**（`pip install pytest`），语法更简洁（普通函数加 `assert` 即可，无需继承 `TestCase`），遇到时可以了解一下。
+
+---
+
 ---
 
 ### ⭐ 练习 9.5
 
 1. 给之前写的 `utils.py` 中的函数写一套 `unittest` 测试。至少用上三种不同的断言方法。
 2. 故意在测试里写一个错误断言，运行看看失败的测试长什么样。
+
+---
+
+## 9.6 logging：专业的日志记录
+
+教程前面一直用 `print()` 输出信息，这对小脚本够用。但在正式项目中，你需要 `logging`——它能控制输出级别、写入文件、带上时间戳和模块名。
+
+### 基本用法
+
+```python
+import logging
+
+# 配置日志级别和格式（只需在程序入口配置一次）
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+# 使用不同级别输出日志
+logging.debug("调试信息：变量 x = 42")      # 默认不显示
+logging.info("服务器启动成功，端口 8080")
+logging.warning("磁盘空间不足，剩余 5%")
+logging.error("连接数据库失败")
+logging.critical("系统即将崩溃！")
+```
+
+输出示例：
+```
+2024-07-15 14:30:22 [INFO] 服务器启动成功，端口 8080
+2024-07-15 14:30:25 [WARNING] 磁盘空间不足，剩余 5%
+2024-07-15 14:30:28 [ERROR] 连接数据库失败
+2024-07-15 14:30:30 [CRITICAL] 系统即将崩溃！
+```
+
+### 五个级别
+
+| 级别 | 用途 |
+|------|------|
+| `DEBUG` | 开发调试用的详细信息 |
+| `INFO` | 正常的运行状态记录 |
+| `WARNING` | 有潜在问题但不影响运行 |
+| `ERROR` | 出错了，部分功能不可用 |
+| `CRITICAL` | 严重错误，程序可能无法继续 |
+
+`basicConfig` 中设置 `level=logging.INFO` 意味着只显示 INFO 及以上级别的日志（DEBUG 被过滤）。
+
+### 写入文件
+
+```python
+logging.basicConfig(
+    filename="app.log",        # 输出到文件而不是屏幕
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+```
+
+### logging 比 print 好在哪？
+
+- **控制级别**：上线时设为 WARNING，不删代码就静默了 DEBUG/INFO
+- **自动附带元信息**：时间戳、模块名、行号等不用手动拼接
+- **输出目标灵活**：可以同时输出到文件、控制台、远程服务器
+- **不阻塞**：`print()` 写 stdout，可能被重定向或缓存干扰
+
+---
+
+### ⭐ 练习 9.6
+
+1. 配置 `logging`，将 INFO 及以上日志写入 `app.log`，同时保持在控制台输出。
+2. 把之前写的猜数字游戏中的 `print()` 提示替换为合适的 `logging` 级别。
 
 ---
 

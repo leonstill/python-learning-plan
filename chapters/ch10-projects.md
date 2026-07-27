@@ -328,15 +328,14 @@ class Fetcher:
 ```python
 from bs4 import BeautifulSoup
 from typing import Optional
-from dataclasses import dataclass, asdict
 
-@dataclass
 class PageContent:
     """解析后的网页内容"""
-    url: str
-    title: str
-    paragraphs: list[str]
-    word_count: int
+    def __init__(self, url: str, title: str, paragraphs: list[str], word_count: int):
+        self.url = url
+        self.title = title
+        self.paragraphs = paragraphs
+        self.word_count = word_count
 
 def parse(html: str, url: str) -> PageContent:
     """从 HTML 中提取标题和正文"""
@@ -399,7 +398,6 @@ def crawl_batch(urls: list[str], output_dir: str = "output"):
 - **速率限制**（`_rate_limit`）：爬虫的基本礼仪，也是自我保护——发太快容易被封 IP。
 - **指数退避**：重试间隔逐渐延长（2s → 4s → 8s），给服务器恢复时间。
 - **编码自动检测**：`apparent_encoding` 用 chardet 推测网页编码，避免中文乱码。
-- **`dataclass`**：`@dataclass` 是 Python 3.7+ 的特性，自动生成 `__init__`、`__repr__` 等，适合做纯数据模型。
 - **HTML 清洗**：移除 script/style/nav/footer 等无关标签，避免噪音。
 
 ---

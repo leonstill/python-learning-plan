@@ -26,6 +26,9 @@ print(m.sqrt(16))
 from math import *       # 会污染命名空间，不知道导入了什么
 ```
 
+> `from module import *` 的行为受模块中 `__all__` 列表控制。如果在模块中定义了 `__all__ = ["add", "subtract"]`，那么 `import *` 只会导出这两个名字。没有定义 `__all__` 时，会导出所有不以 `_` 开头的公开名字。
+
+
 ### 推荐做法
 
 - **首选 `import 模块名`**：调用时前缀清晰，知道函数来自哪里
@@ -136,6 +139,20 @@ mypackage/
 from mypackage.math_utils import add
 from mypackage.data.io_utils import read_file
 ```
+
+在包内部，一个模块引用同包的另一个模块时，可以用**相对导入**：
+
+```python
+# 在 mypackage/data/io_utils.py 里引用同包的 math_utils
+from ..math_utils import add      # .. 表示上一级目录（mypackage）
+from .helpers import format_data  # . 表示当前目录（mypackage/data）
+```
+
+- `.` — 当前包
+- `..` — 上级包
+- `...` — 上上级（很少用）
+
+相对导入只在包内部有效，直接运行含相对导入的文件会报错。
 
 `__init__.py` 可以为空，也可以在包被导入时执行初始化代码。你可以通过它在包级别暴露出常用接口。
 
@@ -249,6 +266,46 @@ itertools.product("AB", "12")          # 笛卡尔积 → A1, A2, B1, B2
 ```
 
 更多模块（`datetime`、`re`、`json` 等）会在第 9 章详细展开。
+
+---
+
+## 5.5 argparse：命令行参数解析
+
+前面的章末练习和项目中，你已经接触了 `sys.argv` 来获取命令行参数。但对于有选项和参数的命令行工具，`argparse` 才是标准做法。
+
+### 基本用法
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="猜数字游戏")
+parser.add_argument("--level", choices=["easy", "medium", "hard"],
+                    default="medium", help="难度级别")
+parser.add_argument("--name", help="玩家名字")
+
+args = parser.parse_args()
+print(f"玩家：{args.name}，难度：{args.level}")
+```
+
+运行：
+```bash
+python game.py --level hard --name 小明
+# 玩家：小明，难度：hard
+
+python game.py -h
+# 自动生成帮助信息，列出所有参数
+```
+
+`argparse` 自动做了三件事：解析参数、校验参数（`choices` 限定可选值）、生成 `-h/--help` 帮助信息。比手动处理 `sys.argv` 可靠得多。
+
+---
+
+### ⭐ 练习 5.5
+
+1. 写一个脚本，用 `argparse` 接收 `--input`（必填）和 `--output`（可选，默认 `output.txt`）两个参数，打印它们。
+2. 给章末练习的猜数字游戏加上 `argparse` 版的 `--level` 参数支持。
+
+---
 
 ---
 

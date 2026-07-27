@@ -380,9 +380,61 @@ print(c.area)    # 78.53975
 
 ---
 
-## 🌟 章末练习
+## 7.7 枚举（Enum）
 
-**简易银行账户系统**
+当一组变量只有有限的几个可选值时，用 `Enum` 比用字符串常量更安全、更清晰。
+
+```python
+from enum import Enum
+
+class Priority(Enum):
+    HIGH = 1
+    MEDIUM = 2
+    LOW = 3
+
+# 使用
+task_priority = Priority.HIGH
+
+print(task_priority)            # Priority.HIGH
+print(task_priority.name)       # 'HIGH'
+print(task_priority.value)      # 1
+
+# 比较
+print(task_priority == Priority.HIGH)   # True
+print(task_priority == "HIGH")          # False —— 不会和字符串混淆
+
+# 从字符串创建
+p = Priority["HIGH"]            # Priority.HIGH
+p = Priority(2)                 # Priority.MEDIUM
+```
+
+**为什么要用 Enum 而不是字符串？**
+
+- **防止拼写错误**：`Priority.HIG` 会立即报 `AttributeError`，而字符串 `"hig"` 悄悄变成了 bug
+- **IDE 自动补全**：输入 `Priority.` 后 IDE 列出所有选项
+- **语义清晰**：看到 `Priority.HIGH` 就知道只有这几个值，不会和别的字符串搞混
+
+### auto()：自动编号
+
+```python
+from enum import Enum, auto
+
+class Color(Enum):
+    RED = auto()      # 1
+    GREEN = auto()    # 2
+    BLUE = auto()     # 3
+```
+
+当你不在意具体数值，只需要区分不同成员时，用 `auto()` 最省事。
+
+---
+
+### ⭐ 练习 7.7
+
+1. 定义一个 `OrderStatus` 枚举，包含 `PENDING`、`SHIPPED`、`DELIVERED`、`CANCELLED` 四个状态。
+2. 写一个 `Order` 类，用 `OrderStatus` 枚举作为订单状态属性，并提供 `update_status()` 方法切换状态。
+
+---
 
 设计以下类结构：
 

@@ -111,6 +111,34 @@ print(total)   # 5050
 
 ---
 
+### 海象运算符 `:=`
+
+Python 3.8 引入了 `:=`（海象运算符），让你在条件判断中**一边赋值一边判断**：
+
+```python
+# 传统写法：赋值和判断分两行
+line = input("输入：")
+while line != "quit":
+    print(f"你输入了：{line}")
+    line = input("输入：")
+
+# 海象运算符：一行搞定
+while (line := input("输入：")) != "quit":
+    print(f"你输入了：{line}")
+```
+
+`:=` 在 `if` 中也很好用：
+
+```python
+# 计算长度后还需要用到它
+if (n := len(data)) > 100:
+    print(f"数据过长：{n} 个元素")
+```
+
+> 海象运算符让代码更紧凑，但不要滥用——只在"需要先计算、再判断、还要用结果"时才用它。
+
+---
+
 ### ⭐ 练习 2.2
 
 1. 用 while 循环打印 1 到 20 之间的所有偶数。
@@ -302,6 +330,81 @@ else:
    *****
    ```
 2. 模拟一个猜数字游戏：预设一个答案（比如 42），每次用户输入后提示"太大"或"太小"，猜中结束并显示次数。
+
+---
+
+## 2.6 match/case：模式匹配
+
+Python 3.10 引入了 `match/case` 语句，它比 `if/elif` 更擅长处理**多分支结构匹配**的场景。
+
+### 基本语法
+
+```python
+status_code = 404
+
+match status_code:
+    case 200:
+        print("成功")
+    case 301 | 302:          # | 表示"或"
+        print("重定向")
+    case 404:
+        print("未找到")
+    case 500:
+        print("服务器错误")
+    case _:                   # _ 是通配符，匹配一切（类似 else）
+        print("未知状态码")
+```
+
+### 解构序列和映射
+
+```python
+# 匹配列表/元组结构
+point = (0, 5)
+
+match point:
+    case (0, 0):
+        print("原点")
+    case (0, y):
+        print(f"在 Y 轴上，y={y}")
+    case (x, 0):
+        print(f"在 X 轴上，x={x}")
+    case (x, y):
+        print(f"坐标 ({x}, {y})")
+
+# 匹配字典结构
+user = {"name": "小明", "role": "admin"}
+
+match user:
+    case {"role": "admin", "name": name}:
+        print(f"管理员 {name}")
+    case {"role": "user", "name": name}:
+        print(f"普通用户 {name}")
+```
+
+### 带条件的匹配（guard）
+
+```python
+age = 20
+
+match age:
+    case n if n < 0:
+        print("年龄不能为负")
+    case n if n < 18:
+        print("未成年")
+    case n if n < 60:
+        print("成年人")
+    case _:
+        print("老年人")
+```
+
+> `match/case` 不是 `switch/case` 的简单替代——它是**结构化模式匹配**，可以同时匹配类型、结构和值。适合处理 JSON 数据、命令解析、状态机等场景。
+
+---
+
+### ⭐ 练习 2.6
+
+1. 用 `match/case` 写一个简单计算器：用户输入 `"add 3 5"` 这样的命令，解析出操作和两个数字并计算结果。
+2. 用 `match/case` 匹配一个坐标元组 `(x, y)`，判断它位于第几象限。
 
 ---
 

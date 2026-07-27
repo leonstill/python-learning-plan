@@ -29,7 +29,7 @@ Python 的缺点也很诚实：**运行速度不如 C/Java**。但对绝大多�
 
 ### 安装 Python
 
-1. 打开 [python.org/downloads](https://python.org/downloads)，下载最新版（3.10+）。
+1. 打开 [python.org/downloads](https://python.org/downloads)，下载最新版（3.11+）。
 2. 运行安装程序时，**务必勾选 "Add Python to PATH"**——这让你在终端里直接输入 `python` 就能运行。
 3. 安装完成后，打开终端（Windows 按 `Win+R` 输入 `cmd`），输入：
 

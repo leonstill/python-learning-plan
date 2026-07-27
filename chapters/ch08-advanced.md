@@ -161,7 +161,9 @@ def greet(name):
 
 ### 装饰器原理
 
-装饰器本质上是一个**接收函数、返回新函数的函数**：
+装饰器本质上是一个**接收函数、返回新函数的函数**。假设你在 `log_utils.py` 中写了一个装饰器，另一个文件 `app.py` 使用它：
+
+**`log_utils.py`**（装饰器定义）：
 
 ```python
 def log_call(func):
@@ -172,9 +174,16 @@ def log_call(func):
         print(f"[LOG] {func.__name__} 返回：{result}")
         return result
     return wrapper
+```
+
+**`app.py`**（使用装饰器）：
+
+```python
+from log_utils import log_call
 
 @log_call                      # 等价于 greet = log_call(greet)
 def greet(name):
+    """向指定的人打招呼"""
     return f"你好，{name}"
 
 print(greet("小明"))
@@ -183,6 +192,40 @@ print(greet("小明"))
 # 你好，小明
 ```
 
+日志功能正常工作。但有一个隐蔽的问题：
+
+```python
+print(greet.__name__)    # 输出：wrapper（不是 "greet"！）
+print(greet.__doc__)     # 输出：None（不是 "向指定的人打招呼"！）
+```
+
+这里涉及 Python 中每个函数自带的两个元数据：
+
+- **`__name__`**：函数的名字。定义时确定，但被装饰后会变成 wrapper 的名字。
+- **`__doc__`**：函数的文档字符串。即函数体内第一行 `"""..."""` 的内容。
+
+这两个属性看似没用，但很多工具依赖它们：IDE 的提示信息、自动生成文档、调试时的 traceback 显示，甚至 `help(greet)` 也会受影响。当装饰器和被装饰函数不在同一个文件时（这是最常见的情况），丢了 `__name__` 的 `greet` 会让调试变得困难——报错时 traceback 里显示的是 `wrapper` 而不是 `greet`。
+
+### @wraps：修复这个问题
+
+用 `functools.wraps` 一行就能解决：
+
+```python
+from functools import wraps
+
+def log_call(func):
+    """装饰器：打印函数调用信息"""
+    @wraps(func)             # 把 func 的 __name__、__doc__ 复制到 wrapper 上
+    def wrapper(*args, **kwargs):
+        print(f"[LOG] 调用 {func.__name__}，参数：{args}")
+        result = func(*args, **kwargs)
+        print(f"[LOG] {func.__name__} 返回：{result}")
+        return result
+    return wrapper
+```
+
+现在 `greet.__name__` 恢复为 `"greet"`，`greet.__doc__` 恢复为 `"向指定的人打招呼"`。写装饰器时加上 `@wraps(func)` 是一个好习惯。
+
 ### 常见应用
 
 **计时器**：
@@ -190,6 +233,7 @@ print(greet("小明"))
 import time
 
 def timer(func):
+    @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.time()
         result = func(*args, **kwargs)
@@ -202,6 +246,7 @@ def timer(func):
 ```python
 def repeat(n):
     def decorator(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             results = []
             for _ in range(n):
@@ -227,7 +272,57 @@ print(roll_dice())   # [3, 6, 1]（三次结果）
 
 ---
 
-## 8.4 上下文管理器
+## 8.4 缓存装饰器：@lru_cache
+
+标准库 `functools` 提供了一个现成的缓存装饰器 `@lru_cache`，能自动记住函数的计算结果，相同参数直接返回缓存值。省去了手写缓存字典的麻烦。
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=128)     # 最多缓存 128 组结果
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(100))        # 瞬间出结果！没有缓存时这几乎算不出来
+```
+
+没加 `@lru_cache` 时，递归的 `fibonacci(100)` 会产生约 `2^100` 次函数调用，根本跑不完。加了缓存后，每个 `n` 只计算一次，复杂度降到 `O(n)`。
+
+### 常用参数
+
+- `maxsize`：缓存上限。超过后按 LRU（最近最少使用）策略淘汰旧条目。设为 `None` 表示无限制。
+- `typed`：设为 `True` 时，`f(1)` 和 `f(1.0)` 视为不同参数分别缓存。
+
+Python 3.9+ 还提供了更简单的 `@cache`（等价于 `@lru_cache(maxsize=None)`），适合不在意内存的场景：
+
+```python
+from functools import cache
+
+@cache
+def expensive_calc(x):
+    ...
+```
+
+### 适用场景
+
+- ✅ 纯函数（相同输入总是产生相同输出）
+- ✅ 递归函数（斐波那契、动态规划）
+- ✅ 开销大的计算/数据库查询
+- ❌ 有副作用的函数（读写文件、发网络请求）
+- ❌ 依赖外部状态的函数（当前时间、全局变量）
+
+---
+
+### ⭐ 练习 8.4
+
+1. 用 `@lru_cache` 实现一个高效的斐波那契函数，对比加缓存前后 `fibonacci(35)` 的执行时间。
+2. 用 `@cache` 缓存一个"计算字符串中不同字符数量"的函数，测试同一字符串多次调用的效果。
+
+---
+
+## 8.5 上下文管理器
 
 你已经用过了上下文管理器——`with open(...) as f:`。它保证无论代码块是否发生异常，资源都能被正确释放。
 
@@ -281,14 +376,14 @@ with file_manager("test.txt", "w") as f:
 
 ---
 
-### ⭐ 练习 8.4
+### ⭐ 练习 8.5
 
 1. 写一个 `timer` 上下文管理器，进入时记录时间，退出时打印"代码块执行了 X 秒"。
 2. 用 `contextmanager` 装饰器实现一个简单的数据库事务模拟（进入时打印"开始事务"，正常退出打印"提交"，异常打印"回滚"）。
 
 ---
 
-## 8.5 类型提示
+## 8.6 类型提示
 
 Python 是动态类型语言，但从 3.5 开始支持**可选的类型提示**，帮助 IDE 提供自动补全和静态检查。
 
@@ -350,7 +445,7 @@ mypy your_script.py
 
 ---
 
-### ⭐ 练习 8.5
+### ⭐ 练习 8.6
 
 1. 给以下函数添加类型提示：
 ```python

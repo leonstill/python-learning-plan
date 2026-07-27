@@ -26,8 +26,8 @@ nums[1:3]       # [20, 30]（切片）
 # --- 修改 ---
 nums[0] = 99                # [99, 20, 30, 40, 50]
 nums.append(60)             # 末尾添加 → [99, 20, 30, 40, 50, 60]
-nums.insert(1, 15)          # 在索引 1 处插入 → [99, 15, 20, ...]
-nums.remove(30)             # 删除第一个值为 30 的元素
+nums.insert(1, 15)          # 在索引 1 处插入 → [99, 15, 20, 30, 40, 50, 60]
+nums.remove(30)             # 删除第一个值为 30 的元素 → [99, 15, 20, 40, 50, 60]
 popped = nums.pop()         # 弹出末尾元素（可指定索引）
 len(nums)                   # 元素个数
 
@@ -52,6 +52,29 @@ c = a.copy()   # 或者 c = a[:]
 ```
 
 这是初学者最容易踩的坑：**变量赋值并不复制列表，而是给同一个列表起了个别名**。
+
+### 浅拷贝与深拷贝
+
+`a.copy()` 和 `a[:]` 都是**浅拷贝**——只复制最外层。如果列表里嵌套了列表，内层仍然是共享的：
+
+```python
+a = [[1, 2], [3, 4]]
+b = a.copy()
+b[0][0] = 99
+print(a)         # [[99, 2], [3, 4]] —— a 的嵌套列表也被改了！
+```
+
+要完全独立复制嵌套结构，需要用 `copy` 模块的 `deepcopy`：
+
+```python
+import copy
+a = [[1, 2], [3, 4]]
+b = copy.deepcopy(a)
+b[0][0] = 99
+print(a)         # [[1, 2], [3, 4]] —— 不受影响
+```
+
+> 大多数场景浅拷贝就够了。只有嵌套可变结构时才需要 `deepcopy`。
 
 ### 排序
 
@@ -162,6 +185,21 @@ for value in info.values():       # 只取值
 ### 字典也是"引用"类型
 
 和列表一样，字典赋值不会复制，`b = a` 后改 `b` 也会影响 `a`。
+
+### setdefault：有则取，无则设
+
+```python
+word_count = {}
+text = "apple banana apple orange banana apple"
+
+for word in text.split():
+    word_count.setdefault(word, 0)    # 键不存在时设为 0，已存在则什么都不做
+    word_count[word] += 1
+
+print(word_count)   # {'apple': 3, 'banana': 2, 'orange': 1}
+```
+
+`setdefault(key, default)` 的逻辑：如果 `key` 已存在，返回它的值；如果不存在，先设为 `default` 再返回。统计计数时特别好用。
 
 ---
 
