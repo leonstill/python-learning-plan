@@ -20,7 +20,10 @@ app = Flask(__name__)
 # ---------------------------------------------------------------------------
 # Markdown → HTML 渲染（使用 mistune 渲染后，为标题添加锚点 id）
 # ---------------------------------------------------------------------------
-_md_parser = mistune.create_markdown(renderer=mistune.HTMLRenderer())
+_md_parser = mistune.create_markdown(
+    renderer=mistune.HTMLRenderer(),
+    plugins=[mistune.plugins.table.table],
+)
 
 
 def render_markdown(text: str) -> str:

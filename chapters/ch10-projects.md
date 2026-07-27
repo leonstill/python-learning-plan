@@ -12,9 +12,9 @@
 
 | 功能 | 命令 | 说明 |
 |------|------|------|
-| 添加任务 | `add 内容` | 可指定优先级 `--priority high\|medium\|low` |
+| 添加任务 | `add 内容` | 可指定优先级 --priority high\|medium\|low |
 | 查看所有 | `list` | 按优先级排序，显示序号 |
-| 查看分类 | `list --status done\|todo` | 筛选已完成/未完成的任务 |
+| 查看分类 | list --status done\|todo | 筛选已完成/未完成的任务 |
 | 标记完成 | `done 序号` | 将任务标记为已完成 |
 | 删除任务 | `delete 序号` | 确认后删除 |
 | 退出 | `quit` | 自动保存到文件 |
