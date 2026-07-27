@@ -1,34 +1,28 @@
 @echo off
-chcp 65001 >nul 2>&1
-title Python Learning Plan - Web Reader
+chcp 65001 >/dev/null 2>&1
+title "Python 学习计划 - Web 阅读程序"
 
 echo ================================================
-echo   Python Learning Plan - Web Reader
+echo   "Python 学习计划 - Web 阅读程序"
 echo ================================================
 echo.
 
-REM Check if Python is installed
-python --version >nul 2>&1
+python --version >/dev/null 2>&1
 if %errorlevel% neq 0 (
-    echo [ERROR] Python not found. Please install Python 3.10+
-    echo Download: https://www.python.org/downloads/
+    echo "[错误] 未找到 Python，请先安装 Python 3.10+"
+    echo "下载地址：https://www.python.org/downloads/"
     pause
     exit /b 1
 )
 
-echo [INFO] Installing dependencies...
+echo "[信息] 正在安装依赖包..."
 pip install flask mistune -q
 
-if %errorlevel% neq 0 (
-    echo [WARN] Dependency installation may have failed, trying to continue...
-)
-
 echo.
-echo [INFO] Starting web server...
-echo [INFO] Open http://localhost:5000 in your browser
-echo [INFO] Press Ctrl+C to stop
+echo "[信息] 正在启动 Web 服务器..."
+echo "[信息] 访问地址：http://localhost:5000"
+echo "[信息] 按 Ctrl+C 停止服务"
 echo.
 
 python server.py
-
 pause

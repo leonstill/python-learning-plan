@@ -1,0 +1,3 @@
+@echo off
+echo [信息] 正在安装依赖包...
+echo done
