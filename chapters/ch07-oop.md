@@ -184,7 +184,7 @@ make_sound(Dog("旺财"))    # 旺财：汪汪！
 ### ⭐ 练习 7.3
 
 1. 定义一个 `Vehicle`（交通工具）类，子类 `Car` 和 `Bike`。`Vehicle` 有个 `run()` 方法，两个子类各自重写。
-2. 用 `isinstance(obj, cls)` 检查一个 `Car` 实例是否既是 `Car` 类型，也是 `Vehicle` 类型。
+2. 用 `isinstance(obj, cls)` 检查一个实例的类型。`isinstance()` 是 Python 内置函数，判断对象是否属于某个类（包括其父类）。例如 `isinstance(Car(), Vehicle)` 返回 `True`，因为 `Car` 是 `Vehicle` 的子类。
 
 ---
 
@@ -269,7 +269,11 @@ class Vector:
         return 2
 
     def __getitem__(self, index):    # 索引访问 vec[0]
-        return self.x if index == 0 else self.y
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        raise IndexError(f"索引 {index} 超出范围，Vector 只有 0 和 1")
 
 v1 = Vector(1, 2)
 v2 = Vector(3, 4)
@@ -435,6 +439,8 @@ class Color(Enum):
 2. 写一个 `Order` 类，用 `OrderStatus` 枚举作为订单状态属性，并提供 `update_status()` 方法切换状态。
 
 ---
+
+## 🌟 章末练习
 
 设计以下类结构：
 

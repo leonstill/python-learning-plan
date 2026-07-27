@@ -258,11 +258,12 @@ n! = n × (n-1) × (n-2) × ... × 1
 
 ```python
 def factorial(n):
-    if n == 1:              # 基线条件：最小问题直接求解
+    if n <= 1:              # 基线条件：0! = 1! = 1
         return 1
     return n * factorial(n - 1)  # 递归调用：问题规模缩小
 
 print(factorial(5))   # 120
+print(factorial(0))   # 1
 ```
 
 ### 递归的两个必备要素
@@ -318,7 +319,8 @@ students = [
     {"name": "小刚", "grade": "A"},
 ]
 group_by(students, lambda s: s["grade"])
-# → {"A": [小明, 小刚], "B": [小红]}
+# → {"A": [{"name":"小明","grade":"A"}, {"name":"小刚","grade":"A"}],
+#     "B": [{"name":"小红","grade":"B"}]}
 ```
 
 这个练习将综合运用参数传递、返回值、lambda、递归等本章所学内容。

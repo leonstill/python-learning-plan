@@ -125,7 +125,9 @@ print(divide(10, 2))  # 5.0
 
 ```
 mypackage/
-├── __init__.py          # 标识这是一个包（3.3+ 可以省略，但建议保留）
+├── __init__.py          # 标识这是一个常规包。Python 3.3+ 允许没有 __init__.py
+│                       # 的"命名空间包"，但它们不能放初始化代码和 __all__ 控制。
+│                       # 常规项目中建议保留（即使内容为空）。
 ├── math_utils.py
 ├── string_utils.py
 └── data/
@@ -241,6 +243,7 @@ random.random()           # [0, 1) 之间的随机浮点数
 random.randint(1, 6)      # [1, 6] 之间的随机整数
 random.choice(["苹果", "香蕉", "橘子"])  # 随机选一个
 random.shuffle(deck)      # 原地打乱列表
+random.sample(range(1, 34), 6)  # 从总体中不重复地随机抽取 k 个 → [3, 17, 22, 8, 31, 15]
 ```
 
 ### collections — 实用容器
@@ -266,6 +269,13 @@ itertools.product("AB", "12")          # 笛卡尔积 → A1, A2, B1, B2
 ```
 
 更多模块（`datetime`、`re`、`json` 等）会在第 9 章详细展开。
+
+---
+
+### ⭐ 练习 5.4
+
+1. 用 `os.path.join` 拼接一个路径，然后用 `os.path.exists` 检查它是否存在。
+2. 用 `random.sample(range(1, 34), 6)` 模拟双色球红球选号。
 
 ---
 
@@ -304,15 +314,6 @@ python game.py -h
 
 1. 写一个脚本，用 `argparse` 接收 `--input`（必填）和 `--output`（可选，默认 `output.txt`）两个参数，打印它们。
 2. 给章末练习的猜数字游戏加上 `argparse` 版的 `--level` 参数支持。
-
----
-
----
-
-### ⭐ 练习 5.4
-
-1. 用 `os.path.join` 拼接一个路径，然后用 `os.path.exists` 检查它是否存在。
-2. 用 `random.sample(range(1, 34), 6)` 模拟双色球红球选号。
 
 ---
 

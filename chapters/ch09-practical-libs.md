@@ -58,7 +58,7 @@ def calculate_age(birth_date_str):
         age -= 1
     return age
 
-print(calculate_age("2000-08-15"))   # 23（假设今2024年7月）
+print(calculate_age("2000-08-15"))   # 结果取决于当前年份（例如在 2024 年为 23 或 24）
 ```
 
 ---
@@ -337,6 +337,10 @@ if __name__ == "__main__":
 如果多个测试有相同的准备工作（比如都要创建一个临时文件），可以放在 `setUp` 和 `tearDown` 里——每个测试方法执行前后自动调用：
 
 ```python
+import os
+import unittest
+
+
 class TestFileOperations(unittest.TestCase):
 
     def setUp(self):
@@ -366,8 +370,6 @@ class TestFileOperations(unittest.TestCase):
 - **修改代码后跑一遍测试**——哪个测试挂了，你就知道哪里出了问题
 
 > `unittest` 是标准库中的测试框架。社区中还有一个更流行的第三方选择 **pytest**（`pip install pytest`），语法更简洁（普通函数加 `assert` 即可，无需继承 `TestCase`），遇到时可以了解一下。
-
----
 
 ---
 

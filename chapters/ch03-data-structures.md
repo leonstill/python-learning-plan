@@ -193,7 +193,7 @@ word_count = {}
 text = "apple banana apple orange banana apple"
 
 for word in text.split():
-    word_count.setdefault(word, 0)    # 键不存在时设为 0，已存在则什么都不做
+    word_count.setdefault(word, 0)    # 键不存在时设为 0，已存在则返回已有值
     word_count[word] += 1
 
 print(word_count)   # {'apple': 3, 'banana': 2, 'orange': 1}
@@ -212,13 +212,13 @@ print(word_count)   # {'apple': 3, 'banana': 2, 'orange': 1}
 
 ## 3.4 集合（set）
 
-集合存储**无序、不重复**的元素，用花括号 `{}`（空集合要写 `set()`，因为 `{}` 是空字典）。
+集合存储**不重复**的元素，用花括号 `{}`（空集合要写 `set()`，因为 `{}` 是空字典）。按照 Python 语言规范，集合是**无序**的——你不能依赖元素的位置。不过 CPython 3.7+ 在实现上恰好保持了插入顺序，但这只是实现细节，跨平台或跨版本时不应依赖此行为。
 
 ```python
 colors = {"红", "绿", "蓝"}
 colors.add("黄")             # 添加
 colors.add("红")             # 已存在，不会重复添加
-print(colors)                # 顺序不确定，每次可能不同
+print(colors)                # 虽 CPython 3.7+ 恰好保持插入顺序，但语言规范不保证
 ```
 
 ### 集合运算（集合的"杀手级"用法）
@@ -237,7 +237,7 @@ a ^ b      # 对称差 → {1, 2, 5, 6}（只在一边出现的）
 
 ```python
 names = ["张三", "李四", "张三", "王五", "李四"]
-unique = list(set(names))    # → ["张三", "李四", "王五"]（顺序不定）
+unique = list(set(names))    # → ["张三", "李四", "王五"]（去重）
 ```
 
 ---

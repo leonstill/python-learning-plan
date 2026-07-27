@@ -281,8 +281,9 @@ from functools import lru_cache
 
 @lru_cache(maxsize=128)     # 最多缓存 128 组结果
 def fibonacci(n):
-    if n <= 1:
-        return n
+    """返回第 n 个斐波那契数（fib(1)=1, fib(2)=1，与第 4 章练习一致）"""
+    if n <= 2:
+        return 1
     return fibonacci(n - 1) + fibonacci(n - 2)
 
 print(fibonacci(100))        # 瞬间出结果！没有缓存时这几乎算不出来

@@ -224,13 +224,12 @@ except Exception as e:
 
 ```python
 try:
-    f = open("data.txt", "r", encoding="utf-8")
+    with open("data.txt", "r", encoding="utf-8") as f:
+        content = f.read()
 except FileNotFoundError:
     print("文件不存在，请检查路径")
 else:
     # 只有 try 成功时才执行
-    content = f.read()
-    f.close()
     print(f"读取了 {len(content)} 个字符")
 finally:
     # 无论是否异常，一定执行

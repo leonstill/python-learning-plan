@@ -93,7 +93,7 @@ class Task:
 ```python
 import json
 from pathlib import Path
-from models import Task
+from .models import Task
 
 DATA_FILE = Path("tasks.json")
 
@@ -114,8 +114,8 @@ def save_tasks(tasks: list[Task]):
 **命令处理**（`commands.py` 核心框架）：
 
 ```python
-from models import Task, Priority
-from storage import load_tasks, save_tasks
+from .models import Task, Priority
+from .storage import load_tasks, save_tasks
 
 tasks = []    # 当前内存中的任务列表
 
@@ -171,7 +171,7 @@ def delete_task(task_id: int):
 
 ```python
 import sys
-from commands import init, add_task, list_tasks, mark_done, delete_task
+from .commands import init, add_task, list_tasks, mark_done, delete_task
 
 def main():
     init()
@@ -491,7 +491,7 @@ def load_csv(filepath: str) -> list[SaleRecord]:
 
 ```python
 from collections import defaultdict
-from reader import SaleRecord
+from .reader import SaleRecord
 
 def summary_by_category(records: list[SaleRecord]) -> dict:
     """按类别汇总销售额"""
@@ -579,6 +579,7 @@ def plot_monthly_trend(trend_data: dict, output_path: str = "trend.png"):
 ```python
 def generate_report(stats, category_data, trend_data, top10, output_path="report.md"):
     """生成 Markdown 格式的分析报告"""
+    from datetime import datetime
     lines = [
         "# 📊 销售数据分析报告",
         f"生成日期：{datetime.now().strftime('%Y-%m-%d')}",
