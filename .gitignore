@@ -1,7 +1,6 @@
 .agents
 .claude
 /docs
-CLAUDE.md
 skills-lock.json
 test.bat
 test.py
