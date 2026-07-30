@@ -28,7 +28,9 @@
             max-width: 700px;
             margin: -20px auto 0;
             padding: 0 20px;
-            position: relative;
+            /* position: relative; */
+            position: sticky;
+            top: 0;
             z-index: 10;
         }
         .search-box {
@@ -50,12 +52,29 @@
             background: #3776AB;
             color: #fff;
             border: none;
-            padding: 0 28px;
+            padding: 0 24px;
             font-size: 1em;
             cursor: pointer;
             transition: background .2s;
         }
+
         .search-box button:hover { background: #2b5b84; }
+
+        .search-box>#clearBtn {
+            /* position: absolute; */
+            display: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            margin: auto 8px;
+            padding: 0;
+            background: #efe0e0;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .search-box>#clearBtn:hover { background: #f39e9e; color: #333; }
 
         /* ── 搜索结果 ── */
         .search-results {
@@ -178,6 +197,7 @@
 <div class="search-section">
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="搜索章节内容，如：装饰器、列表、异常处理..." autofocus>
+        <button id="clearBtn">✕</button>
         <button id="searchBtn">🔍 搜索</button>
     </div>
 </div>
@@ -259,9 +279,20 @@ async function doSearch() {
     }
 }
 
+const clearBtn = document.getElementById('clearBtn');
+
 searchBtn.addEventListener('click', doSearch);
 searchInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') doSearch();
+});
+searchInput.addEventListener('input', () => {
+    console.log('searchInput value:', searchInput.value);
+    clearBtn.style.display = searchInput.value ? 'flex' : 'none';
+});
+clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    searchResults.innerHTML = '';
 });
 </script>
 
